@@ -1,0 +1,13 @@
+{
+  "enabledPlugins": {
+    "pstack@pstack-park-leasing": true
+  },
+  "extraKnownMarketplaces": {
+    "pstack-park-leasing": {
+      "source": {
+        "source": "directory",
+        "path": "."
+      }
+    }
+  }
+}

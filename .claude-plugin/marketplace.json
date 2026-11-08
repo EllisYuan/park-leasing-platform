@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "pstack-park-leasing",
+  "description": "Project-local copy of backnotprop/pstack for park-leasing-platform",
+  "owner": {
+    "name": "backnotprop"
+  },
+  "plugins": [
+    {
+      "name": "pstack",
+      "source": "./plugins/pstack",
+      "description": "if you want to go fast, go deep first. rigorous agent workflows you can parallelize with confidence.",
+      "version": "0.15.36",
+      "author": {
+        "name": "Lauren Tan"
+      },
+      "homepage": "https://github.com/backnotprop/pstack"
+    }
+  ]
+}

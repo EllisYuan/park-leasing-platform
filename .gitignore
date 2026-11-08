@@ -1,0 +1,33 @@
+# Local credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+
+# Dependencies and build output
+node_modules/
+target/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Runtime data
+/logs/
+/uploads/
+/data/
+*.log
+
+# Local editor and agent settings
+.idea/
+.vscode/
+.claude/settings.local.json
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Vendored agent plugin (project-local tooling)
+plugins/
