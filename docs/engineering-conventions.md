@@ -198,7 +198,7 @@ HTTP 映射：400 参数/业务校验；401 未认证；403 已认证但无权�
 每个 ticket 在 `docs/evidence/<NN>-<slug>/` 保存：
 
 - `README.md`：执行命令、日期、环境、结果摘要、未执行项。
-- `*.log` 或 `*.txt`：真实命令输出（可裁剪重复行，但保留关键断言与统计）。
+- `*.log` 或 `*.txt`：真实命令输出（可裁剪重复行，但保留关键断言与统计）。证据日志已由 `.gitignore` 负向规则纳入版本控制，收尾时必须随 ticket 一并提交。
 - 前端截图（若执行）：注明页面、宽度与运行方式。
 
 ticket 文件（`.scratch/park-leasing-platform/issues/NN-*.md`）：
@@ -213,7 +213,23 @@ Git：
 - 提交信息中文，不写模型信息。
 - 完成前把 `integration/park-leasing-platform` 最新提交 merge 进本分支并重跑受影响测试。
 
-## 12. 已知限制
+## 12. 中断恢复与重跑
+
+`/implement-spec` 或逐票 `/implement` 可能因会话中断、限流、Docker 掉线而停止。implementer subagent 的行为是：从 integration 分支最新提交重新开始，未合入的半成品不会被继承。因此**代码本身可以放心重做**，需要人工处理的是状态、worktree、证据与假完成记录。
+
+重跑前逐项确认，全部通过才可继续：
+
+1. **清理 worktree 与分支**：`git worktree prune`；删除残留的 `ticket/*` 分支和 `plp-worktrees/` 下对应目录。同名分支或同路径 worktree 会让下一次 `worktree add` / `checkout -b` 直接失败。
+2. **归还悬空的 `claimed`**：被中断时已标 `claimed` 的票不在 ready frontier 内，重跑会跳过它，导致全部下游停摆。改回 `open`；若其 `## Answer` 已写但代码未合入，一并删除 Answer 和已勾选的 Acceptance criteria。
+3. **确认 integration 分支干净**：`git status` 无未完成改动，不存在 `MERGE_HEAD`（合并冲突未处理完），没有残留的冲突标记。merger 中断最容易留下半合并状态，下游 implementer 会从坏的 tip 分叉。
+4. **确认基线是绿的**：`cd server && mvn test` 在当前 integration tip 上通过。基线红着就重跑，会把既有失败误判为新票的问题。
+5. **核对 `resolved` 的真实性**：抽查最近几张 `resolved` 票的提交是否确实在 integration 分支上（`git log --oneline`）。标了 resolved 却未合入会让后续十几张票建立在假地基上，最后 `/code-review` 才发现。
+6. **确认证据已入库**：`docs/evidence/` 的 `*.log` 已由 `.gitignore` 负向规则纳入版本控制；收尾前必须提交，因为 `/implement-spec` 结束时会清理 implementer worktree，未提交的证据不可恢复。
+7. **确认运行环境**：Docker Desktop 在运行（Testcontainers 需要）；Windows 上按端口停掉自己遗留的 jar 进程，避免 `target/` 被锁。
+
+恢复顺序固定为：先做 1—2，让任务图回到自洽状态；再做 3—5，让代码基线可信；最后 6—7 才重新启动。
+
+## 13. 已知限制
 
 - 本期不实现在线支付、真实打款、电子签章、短信/邮件/WebSocket、能耗分摊、政策申报、3D。
 - 部署为单实例；会话不持久化；未配置 HTTPS 时不声称 Secure Cookie 已启用。

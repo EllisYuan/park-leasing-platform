@@ -18,6 +18,8 @@ coverage/
 /uploads/
 /data/
 *.log
+# ticket 证据日志必须入库：worktree 清理后不可恢复
+!docs/evidence/**/*.log
 
 # Local editor and agent settings
 .idea/
